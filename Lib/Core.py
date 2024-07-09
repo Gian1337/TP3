@@ -2,6 +2,8 @@
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 from Lib import Var
 
 
@@ -135,5 +137,65 @@ def mostrarDelitosPorSexo(pAño):
         print(f"Ha ocurrido un error: {e}")   
 
 
+def mostrarPictograma(pAño):
+    try:
+        current_dir = os.getcwd()
+        print(f"Directorio de trabajo actual: {current_dir}")
+        df = pd.read_csv('victimas-data.csv', sep=";")
+        data_anio = df[df['anio'] == pAño]
+        
+        #datos pictograma
+        total_victimas_masc = data_anio['cantidad_victimas_masc'].sum()
+        total_victimas_fem = data_anio['cantidad_victimas_fem'].sum()
+        total_victimas = total_victimas_masc + total_victimas_fem
+        
+        #porcentaje de mujeres
+        porcentaje_fem = (total_victimas_fem / total_victimas) * 10
+        
+        
+        ruta_img_mujer = './data/woman.png'
+        ruta_img_hombre = './data/malee.png'
 
+        print(f"Ruta de imagen mujer: {ruta_img_mujer}")
+        print(f"Ruta de imagen hombre: {ruta_img_hombre}")
+
+        # Verifica si existen las imágenes
+        if not os.path.isfile(ruta_img_mujer) or not os.path.isfile(ruta_img_hombre):
+            raise FileNotFoundError("No se encontraron las imágenes en las rutas especificadas.")
+        
+        #imágenes para el pictograma
+        img_mujer = mpimg.imread(ruta_img_mujer)
+        img_hombre = mpimg.imread(ruta_img_hombre)
+        
+        #gráfico
+        fig, ax = plt.subplots(figsize=(14, 2))
+
+        ax.set_xlim(0, 10)
+        ax.set_ylim(0, 1)
+        ax.set_xticks([])
+        ax.set_yticks([])
+        ax.set_title(f"Distribución de víctimas por género en el año {pAño} a nivel nacional")
+
+        # Calculo de íconos de mujer y hombre
+        num_mujeres = int(round(porcentaje_fem))
+        num_hombres = 10 - num_mujeres
+
+        # Añade íconos al gráfico
+        for j in range(num_mujeres):
+            imagebox = OffsetImage(img_mujer, zoom=0.1)
+            ab = AnnotationBbox(imagebox, (j + 0.5, 0.5), frameon=False)
+            ax.add_artist(ab)
+
+        for j in range(num_hombres):
+            imagebox = OffsetImage(img_hombre, zoom=0.1)
+            ab = AnnotationBbox(imagebox, (num_mujeres + j + 0.5, 0.5), frameon=False)
+            ax.add_artist(ab)
+
+        plt.tight_layout()
+        plt.show()
+        
+    except pd.errors.ParserError as e:
+        print(f"Error al leer el archivo CSV: {e}")
+    except Exception as e:
+        print(f"Ha ocurrido un error: {e}")
         

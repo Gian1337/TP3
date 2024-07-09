@@ -11,7 +11,7 @@ def main():
     print('1- Número de VÍCTIMAS por provincia en período [2000-2022]')
     print('2- Distribución de DELITOS por TIPO en ROSARIO según AÑO')
     print('3- Distribución de VÍCTIMAS según el SEXO y AÑO')
-    print('4- Tasa de VÍCTIMAS en Rosario según período ingresado')
+    print('4- Pictograma de VÍCTIMAS MUJERES cada 10 personas según período ingresado')
     print()
     opcion = int(input("Ingrese su opción: "))
     if opcion == 1:
@@ -27,6 +27,9 @@ def main():
     if opcion == 3:
         año = int(input("Ingrese un año (YYYY) para ver los delitos en hombres y mujeres: "))
         Core.mostrarDelitosPorSexo(año)
+    if opcion == 4:
+        año = int(input("Ingrese un año (YYYY) para ver un pictograma entre hombres y mujeres: "))
+        Core.mostrarPictograma(año)
 
 if __name__ == '__main__':
     main()
